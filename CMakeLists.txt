@@ -34,8 +34,23 @@ target_compile_features(geodex INTERFACE cxx_std_20)
 # OMPL (shared by tests and examples when BUILD_OMPL_EXAMPLES is ON)
 option(BUILD_OMPL_EXAMPLES "Build OMPL integration examples (requires OMPL)" OFF)
 if(BUILD_OMPL_EXAMPLES)
-  find_package(ompl REQUIRED)
+  set(OMPL_BUILD_DEMOS OFF CACHE BOOL "" FORCE)
+  set(OMPL_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+  FetchContent_Declare(
+    ompl
+    GIT_REPOSITORY https://github.com/utiasSTARS/ompl.git #https://github.com/ompl/ompl.git
+    GIT_TAG planner/greedyrrtstar #1.7.0
+  )
+  FetchContent_MakeAvailable(ompl)
 endif()
+
+# YAML-CPP
+FetchContent_Declare(
+    yaml_cpp
+    GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
+    GIT_TAG master #0.8.0
+)
+FetchContent_MakeAvailable(yaml_cpp)
 
 # Robot dynamics (precompiled CRBA mass matrices)
 option(GEODEX_ROBOTS "Build the built-in robot dynamics library" ON)

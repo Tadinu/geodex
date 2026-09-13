@@ -38,6 +38,7 @@ if not hasattr(Path, "is_relative_to"):
         except ValueError:
             return False
 
+
     Path.is_relative_to = _is_relative_to  # type: ignore[attr-defined]
 
 import numpy as np
@@ -55,16 +56,16 @@ logging.getLogger("yourdfpy").setLevel(logging.ERROR)
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_URDF = REPO_ROOT / "data" / "robots" / "panda" / "urdf" / "panda.urdf"
 DEFAULT_SCENE = (
-    REPO_ROOT
-    / "data"
-    / "datasets"
-    / "mbm"
-    / "scenes"
-    / "panda"
-    / "table_pick"
-    / "scene0002.scene.yaml"
+        REPO_ROOT
+        / "data"
+        / "datasets"
+        / "mbm"
+        / "scenes"
+        / "panda"
+        / "table_pick"
+        / "scene0002.scene.yaml"
 )
-DEFAULT_JSON = "manipulator_planning.json"
+DEFAULT_JSON = "/home/tad/0_ROBOTICS/DIFFERENTIAL_GEOMETRY/geodex/manipulator_planning.json"
 
 # Animation densification target. Sparse raw paths and short smoothed paths
 # both upsample to this length so the animation feels smooth at any speed.
@@ -197,10 +198,10 @@ def main():
                         help="Path to the manipulator_planning JSON output.")
     parser.add_argument("--urdf", type=Path, default=None,
                         help="URDF used for visualization (defaults to JSON's "
-                        "'urdf' field, falling back to vendored panda).")
+                             "'urdf' field, falling back to vendored panda).")
     parser.add_argument("--scene", type=Path, default=None,
                         help="Scene YAML for obstacles (defaults to JSON's "
-                        "'scene' field, falling back to vendored table-pick).")
+                             "'scene' field, falling back to vendored table-pick).")
     parser.add_argument("--port", type=int, default=8080)
     parser.add_argument("--ee-link", default=None,
                         help="Link to trace for the end-effector trail.")
@@ -293,8 +294,8 @@ def main():
     # Pre-compute densified paths and EE trails for each variant. The trails
     # are added with distinct colors so the user can flip between them.
     TRAIL_COLORS = {
-        "raw": (200, 200, 50),          # yellow
-        "smooth_path": (220, 50, 50),   # red
+        "raw": (200, 200, 50),  # yellow
+        "smooth_path": (220, 50, 50),  # red
     }
 
     densified = {}

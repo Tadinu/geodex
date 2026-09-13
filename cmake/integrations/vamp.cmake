@@ -22,9 +22,6 @@ if(GEODEX_VAMP)
     message(FATAL_ERROR
       "GEODEX_VAMP requires BUILD_OMPL_EXAMPLES=ON (depends on OMPL).")
   endif()
-  if(NOT DEFINED VAMP_DIR)
-    message(FATAL_ERROR "GEODEX_VAMP requires VAMP_DIR to be set to the VAMP source root.")
-  endif()
   find_package(yaml-cpp REQUIRED CONFIG)
 
   # VAMP's CMake injects -march=native (and -mavx2 on x86) into
@@ -35,7 +32,6 @@ if(GEODEX_VAMP)
   set(VAMP_BUILD_PYTHON_BINDINGS OFF CACHE BOOL "" FORCE)
   set(VAMP_BUILD_CPP_DEMO OFF CACHE BOOL "" FORCE)
   set(VAMP_BUILD_OMPL_DEMO OFF CACHE BOOL "" FORCE)
-  add_subdirectory(${VAMP_DIR} ${CMAKE_BINARY_DIR}/vamp EXCLUDE_FROM_ALL)
   set(CMAKE_CXX_FLAGS "${_geodex_vamp_saved_cxx_flags}" CACHE STRING "" FORCE)
 
   add_library(geodex_vamp STATIC
