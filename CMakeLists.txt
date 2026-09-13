@@ -10,32 +10,72 @@ include(CMakePackageConfigHelpers)
 include(FetchContent)
 
 # Eigen3
-FetchContent_Declare(
-  eigen
-  GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
-  GIT_TAG 5.0.0
-  GIT_SHALLOW TRUE
-)
-FetchContent_GetProperties(eigen)
-if(NOT eigen_POPULATED)
-  FetchContent_Populate(eigen)
-endif()
+find_package(Eigen3 REQUIRED)
 
 # Header-only interface library
 add_library(geodex INTERFACE)
 add_library(geodex::geodex ALIAS geodex)
 target_include_directories(geodex INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<BUILD_INTERFACE:${eigen_SOURCE_DIR}>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
+target_link_libraries(geodex INTERFACE Eigen3::Eigen)
 target_compile_features(geodex INTERFACE cxx_std_20)
 
 # OMPL (shared by tests and examples when BUILD_OMPL_EXAMPLES is ON)
 option(BUILD_OMPL_EXAMPLES "Build OMPL integration examples (requires OMPL)" OFF)
 if(BUILD_OMPL_EXAMPLES)
-  find_package(ompl REQUIRED)
+  set(OMPL_BUILD_DEMOS OFF CACHE BOOL "" FORCE)
+  set(OMPL_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+  FetchContent_Declare(
+    ompl
+    GIT_REPOSITORY https://github.com/utiasSTARS/ompl.git #https://github.com/ompl/ompl.git
+    GIT_TAG planner/greedyrrtstar #1.7.0
+    GIT_SHALLOW    TRUE
+    SYSTEM
+    EXCLUDE_FROM_ALL
+  )
+  if(NOT TARGET eigen)
+    add_library(eigen INTERFACE IMPORTED GLOBAL)
+    target_link_libraries(eigen INTERFACE Eigen3::Eigen)
+  endif()
+  FetchContent_MakeAvailable(ompl)
 endif()
+
+# YAML-CPP
+FetchContent_Declare(
+    yaml-cpp
+    GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
+    GIT_TAG master #0.8.0
+    GIT_SHALLOW    TRUE
+    SYSTEM
+    EXCLUDE_FROM_ALL
+)
+FetchContent_MakeAvailable(yaml-cpp)
+
+# Pinocchio
+#set(BUILD_PYTHON_INTERFACE OFF CACHE BOOL "Disable Python bindings" FORCE)
+#set(BUILD_TESTING OFF CACHE BOOL "Disable Pinocchio tests" FORCE)
+#set(BUILD_BENCHMARK OFF CACHE BOOL "Disable Pinocchio benchmarks" FORCE)
+#set(BUILD_WITH_URDF_SUPPORT ON CACHE BOOL "Enable URDF support" FORCE)
+
+# eigenpy
+FetchContent_Declare(
+    eigenpy
+    GIT_REPOSITORY https://github.com/stack-of-tasks/eigenpy.git
+    GIT_TAG        v3.13.0
+    FIND_PACKAGE_ARGS CONFIG
+)
+FetchContent_MakeAvailable(eigenpy)
+
+FetchContent_Declare(
+    pinocchio
+    GIT_REPOSITORY https://github.com/stack-of-tasks/pinocchio.git
+    GIT_TAG        v4.1.0
+    GIT_SHALLOW    TRUE
+    FIND_PACKAGE_ARGS CONFIG
+)
+FetchContent_MakeAvailable(pinocchio)
 
 # Robot dynamics (precompiled CRBA mass matrices)
 option(GEODEX_ROBOTS "Build the built-in robot dynamics library" ON)
@@ -102,9 +142,9 @@ if(BUILD_DOCS)
 endif()
 
 # Install
-install(TARGETS geodex
-  EXPORT geodexTargets
-)
+#install(TARGETS geodex
+#  EXPORT geodexTargets
+#)
 
 install(DIRECTORY include/
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
@@ -114,11 +154,11 @@ install(DIRECTORY ${eigen_SOURCE_DIR}/Eigen
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
-install(EXPORT geodexTargets
-  FILE geodexTargets.cmake
-  NAMESPACE geodex::
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/geodex
-)
+#install(EXPORT geodexTargets
+#  FILE geodexTargets.cmake
+#  NAMESPACE geodex::
+#  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/geodex
+#)
 
 configure_package_config_file(
   cmake/geodexConfig.cmake.in

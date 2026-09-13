@@ -22,10 +22,7 @@ if(GEODEX_VAMP)
     message(FATAL_ERROR
       "GEODEX_VAMP requires BUILD_OMPL_EXAMPLES=ON (depends on OMPL).")
   endif()
-  if(NOT DEFINED VAMP_DIR)
-    message(FATAL_ERROR "GEODEX_VAMP requires VAMP_DIR to be set to the VAMP source root.")
-  endif()
-  find_package(yaml-cpp REQUIRED CONFIG)
+  #find_package(yaml-cpp REQUIRED CONFIG)
 
   # VAMP's CMake injects -march=native (and -mavx2 on x86) into
   # CMAKE_CXX_FLAGS globally. Save/restore around the add_subdirectory so
@@ -35,7 +32,6 @@ if(GEODEX_VAMP)
   set(VAMP_BUILD_PYTHON_BINDINGS OFF CACHE BOOL "" FORCE)
   set(VAMP_BUILD_CPP_DEMO OFF CACHE BOOL "" FORCE)
   set(VAMP_BUILD_OMPL_DEMO OFF CACHE BOOL "" FORCE)
-  add_subdirectory(${VAMP_DIR} ${CMAKE_BINARY_DIR}/vamp EXCLUDE_FROM_ALL)
   set(CMAKE_CXX_FLAGS "${_geodex_vamp_saved_cxx_flags}" CACHE STRING "" FORCE)
 
   add_library(geodex_vamp STATIC
@@ -44,10 +40,9 @@ if(GEODEX_VAMP)
   set_target_properties(geodex_vamp PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
   target_include_directories(geodex_vamp
-    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-           $<BUILD_INTERFACE:${eigen_SOURCE_DIR}>)
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
   target_link_libraries(geodex_vamp
-    PUBLIC vamp::vamp yaml-cpp::yaml-cpp ompl::ompl)
+    PUBLIC vamp::vamp yaml-cpp::yaml-cpp ompl::ompl Eigen3::Eigen)
 
   # PRIVATE — SIMD flags apply only to vamp_impl.cpp, never propagate.
   if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
@@ -67,7 +62,7 @@ if(GEODEX_VAMP)
   target_link_libraries(geodex INTERFACE geodex_vamp)
 
   # Add to the geodex export set so install() knows about the transitive dep.
-  install(TARGETS geodex_vamp EXPORT geodexTargets)
+  #install(TARGETS geodex_vamp EXPORT geodexTargets)
 
   message(STATUS "VAMP integration enabled (transitively linked via geodex)")
 endif()

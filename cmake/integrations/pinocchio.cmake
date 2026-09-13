@@ -10,7 +10,17 @@
 option(GEODEX_PINOCCHIO "Build Pinocchio integration" OFF)
 
 if(GEODEX_PINOCCHIO)
-  find_package(pinocchio REQUIRED)
+  if(TARGET pinocchio::pinocchio)
+    message(STATUS "🎉 pinocchio is AVAILABLE and ready to use!")
+    get_target_property(is_imported pinocchio::pinocchio IMPORTED)
+    if(is_imported)
+      message(STATUS "-> Sourced from: SYSTEM installation (find_package)")
+    else()
+      message(STATUS "-> Sourced from: FETCHCONTENT (compiled from source)")
+    endif()
+  else()
+    message(FATAL_ERROR "❌ pinocchio package is NOT available!")
+  endif()
 
   add_library(geodex_pinocchio INTERFACE)
   add_library(geodex::pinocchio ALIAS geodex_pinocchio)
