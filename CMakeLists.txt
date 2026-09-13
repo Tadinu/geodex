@@ -28,7 +28,6 @@ endif()
 include(cmake/GeodexFetch.cmake)
 if(NOT GEODEX_DOWNLOAD_DIR)
   set(GEODEX_DOWNLOAD_DIR "${CMAKE_BINARY_DIR}/_geodex_deps/downloads")
-endif()
 
 # Fetch the pinned Eigen 5.0.0. geodex installs it with its own headers.
 set(eigen_SOURCE_DIR "${CMAKE_BINARY_DIR}/_geodex_deps/src/eigen")
@@ -43,9 +42,9 @@ add_library(geodex INTERFACE)
 add_library(geodex::geodex ALIAS geodex)
 target_include_directories(geodex INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<BUILD_INTERFACE:${eigen_SOURCE_DIR}>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
+target_link_libraries(geodex INTERFACE Eigen3::Eigen)
 target_compile_features(geodex INTERFACE cxx_std_20)
 
 # OMPL integration with the state space, the planner facade and their tests.
@@ -55,10 +54,43 @@ option(GEODEX_OMPL "Build OMPL integration and its tests (requires OMPL)" OFF)
 if(BUILD_OMPL_EXAMPLES)
   set(GEODEX_OMPL ON CACHE BOOL "" FORCE)
 endif()
-if(GEODEX_OMPL)
-  find_package(ompl REQUIRED)
   geodex_check_ompl_fork()
 endif()
+
+# YAML-CPP
+FetchContent_Declare(
+    yaml-cpp
+    GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
+    GIT_TAG master #0.8.0
+    GIT_SHALLOW    TRUE
+    SYSTEM
+    EXCLUDE_FROM_ALL
+)
+FetchContent_MakeAvailable(yaml-cpp)
+
+# Pinocchio
+#set(BUILD_PYTHON_INTERFACE OFF CACHE BOOL "Disable Python bindings" FORCE)
+#set(BUILD_TESTING OFF CACHE BOOL "Disable Pinocchio tests" FORCE)
+#set(BUILD_BENCHMARK OFF CACHE BOOL "Disable Pinocchio benchmarks" FORCE)
+#set(BUILD_WITH_URDF_SUPPORT ON CACHE BOOL "Enable URDF support" FORCE)
+
+# eigenpy
+FetchContent_Declare(
+    eigenpy
+    GIT_REPOSITORY https://github.com/stack-of-tasks/eigenpy.git
+    GIT_TAG        v3.13.0
+    FIND_PACKAGE_ARGS CONFIG
+)
+FetchContent_MakeAvailable(eigenpy)
+
+FetchContent_Declare(
+    pinocchio
+    GIT_REPOSITORY https://github.com/stack-of-tasks/pinocchio.git
+    GIT_TAG        v4.1.0
+    GIT_SHALLOW    TRUE
+    FIND_PACKAGE_ARGS CONFIG
+)
+FetchContent_MakeAvailable(pinocchio)
 
 # Robot dynamics (precompiled CRBA mass matrices)
 option(GEODEX_ROBOTS "Build the built-in robot dynamics library" ON)
@@ -133,11 +165,6 @@ if(TARGET geodex_robots)
   )
 endif()
 
-install(EXPORT geodexTargets
-  FILE geodexTargets.cmake
-  NAMESPACE geodex::
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/geodex
-)
 
 configure_package_config_file(
   cmake/geodexConfig.cmake.in

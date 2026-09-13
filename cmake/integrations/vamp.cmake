@@ -24,7 +24,6 @@ if(GEODEX_VAMP)
   if(NOT VAMP_DIR)
     geodex_fetch(vamp "${CMAKE_BINARY_DIR}/_geodex_deps/src/vamp")
     set(VAMP_DIR "${CMAKE_BINARY_DIR}/_geodex_deps/src/vamp")
-  endif()
   # Hand VAMP's configure step the pinned, hash-checked copies of CPM.cmake and its three
   # header libraries.
   geodex_download("${GEODEX_VAMP_CPM_URL}" "${GEODEX_VAMP_CPM_SHA256}"
@@ -34,7 +33,6 @@ if(GEODEX_VAMP)
     geodex_fetch(${_dep_lower} "${CMAKE_BINARY_DIR}/_geodex_deps/src/${_dep_lower}")
     set(CPM_${_dep}_SOURCE "${CMAKE_BINARY_DIR}/_geodex_deps/src/${_dep_lower}")
   endforeach()
-  find_package(yaml-cpp REQUIRED CONFIG)
 
   # VAMP's CMake adds -march=native (and -mavx2 on x86) to the global CMAKE_CXX_FLAGS.
   # Save and restore CMAKE_CXX_FLAGS around add_subdirectory to keep the configured flags
@@ -45,7 +43,6 @@ if(GEODEX_VAMP)
   set(VAMP_BUILD_OMPL_DEMO OFF CACHE BOOL "" FORCE)
   # Do not install VAMP. It is header-only and stays inside geodex_vamp.
   set(VAMP_INSTALL_CPP_LIBRARY OFF CACHE BOOL "" FORCE)
-  add_subdirectory(${VAMP_DIR} ${CMAKE_BINARY_DIR}/vamp EXCLUDE_FROM_ALL)
   set(CMAKE_CXX_FLAGS "${_geodex_vamp_saved_cxx_flags}" CACHE STRING "" FORCE)
 
   include(${CMAKE_CURRENT_LIST_DIR}/../vamp_robots.cmake)
@@ -59,8 +56,7 @@ if(GEODEX_VAMP)
   set_target_properties(geodex_vamp PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
   target_include_directories(geodex_vamp
-    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-           $<BUILD_INTERFACE:${eigen_SOURCE_DIR}>)
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
   # The public header exposes OMPL types only. VAMP stays inside the archive, and yaml-cpp
   # is a link-only dependency. Neither reaches consumer compiles.
   target_link_libraries(geodex_vamp
@@ -91,7 +87,7 @@ if(GEODEX_VAMP)
   target_link_libraries(geodex INTERFACE geodex_vamp)
 
   # Add geodex_vamp to the geodex export set.
-  install(TARGETS geodex_vamp EXPORT geodexTargets)
+  #install(TARGETS geodex_vamp EXPORT geodexTargets)
 
   message(STATUS "VAMP integration enabled (transitively linked via geodex)")
 endif()

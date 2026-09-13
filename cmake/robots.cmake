@@ -87,13 +87,13 @@ set_target_properties(geodex_robots PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 target_include_directories(geodex_robots
   PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-         $<BUILD_INTERFACE:${eigen_SOURCE_DIR}>
          # The public header `mass_matrix.hpp` includes the per-robot constants
          # (constexpr nq, joint limits, extern-C declaration) as
          # `generated/<robot>_crba.hpp`. The parent of the generated directory
          # must be on the consumer's include path.
          $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/robots>
   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/robots/generated)
+target_link_libraries(geodex_robots PUBLIC Eigen3::Eigen)
 target_compile_features(geodex_robots PUBLIC cxx_std_20)
 
 # ---------------------------------------------------------------------------
@@ -167,7 +167,7 @@ endif()
 # Link geodex_robots through the geodex INTERFACE target. Consumers do not reference it.
 # ---------------------------------------------------------------------------
 target_link_libraries(geodex INTERFACE geodex_robots)
-install(TARGETS geodex_robots EXPORT geodexTargets)
+#install(TARGETS geodex_robots EXPORT geodexTargets)
 # The top-level CMakeLists.txt installs the generated headers next to the public ones.
 
 list(JOIN GEODEX_ROBOT_NAMES " " _robot_list_str)

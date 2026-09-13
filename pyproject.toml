@@ -10,7 +10,6 @@ readme = "README.md"
 # geodex is Apache-2.0.
 license = "Apache-2.0 AND BSD-3-Clause AND BSD-3-Clause-Clear AND BSL-1.0 AND MIT AND MPL-2.0 AND Zlib"
 license-files = ["LICENSE", "NOTICE", "THIRD_PARTY_LICENSES.txt"]
-requires-python = ">=3.12"
 dependencies = ["numpy>=1.21"]
 classifiers = [
     "Development Status :: 3 - Alpha",

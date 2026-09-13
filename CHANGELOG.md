@@ -142,7 +142,7 @@ geodex 1.0 plans collision-free, metric-aware robot motion in a single planning 
 Initial public release.
 
 #### Added
-- C++20 concept hierarchy: `Manifold`, `RiemannianManifold`, `HasMetric`, `HasDistance`, `HasGeodesic`, `HasInjectivityRadius`
+- C++20 concept hierarchy: `Manifold`, `RiemannianManifold`, `MetricManifold`, `HasDistance`, `HasGeodesic`, `HasInjectivityRadius`
 - Manifold implementations: `Sphere`, `Euclidean`, `Torus`, `SE2`, `ConfigurationSpace`
 - Metric policies: `ConstantSPDMetric`, `SE2LeftInvariantMetric`, `KineticEnergyMetric`, `JacobiMetric`, `PullbackMetric`, `WeightedMetric`
 - Retraction policies: `SphereExponentialMap`, `SphereProjectionRetraction`, `SE2ExponentialMap`, `SE2EulerRetraction`
