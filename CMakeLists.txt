@@ -20,7 +20,7 @@ find_package(Threads REQUIRED)
 # find_package(Python) with a different component set, and Python::Module must exist first.
 option(BUILD_PYTHON_BINDINGS "Build Python bindings via nanobind" OFF)
 if(BUILD_PYTHON_BINDINGS)
-  find_package(Python 3.12 REQUIRED COMPONENTS Interpreter Development.Module
+  find_package(Python 3.11 REQUIRED COMPONENTS Interpreter Development.Module
     OPTIONAL_COMPONENTS Development Development.SABIModule)
 endif()
 

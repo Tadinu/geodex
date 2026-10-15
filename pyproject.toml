@@ -10,7 +10,7 @@ readme = "README.md"
 # geodex is Apache-2.0.
 license = "Apache-2.0 AND BSD-3-Clause AND BSD-3-Clause-Clear AND BSL-1.0 AND MIT AND MPL-2.0 AND Zlib"
 license-files = ["LICENSE", "NOTICE", "THIRD_PARTY_LICENSES.txt"]
-requires-python = ">=3.12"
+requires-python = ">=3.11"
 dependencies = ["numpy>=1.21"]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -18,6 +18,7 @@ classifiers = [
     "Operating System :: MacOS",
     "Operating System :: POSIX :: Linux",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
@@ -39,7 +40,7 @@ Issues = "https://github.com/utiasSTARS/geodex/issues"
 minimum-version = "0.10"
 cmake.build-type = "Release"
 wheel.packages = ["python/geodex"]
-wheel.py-api = "cp312"
+wheel.py-api = "cp311"
 # Install only the extension modules into the wheel, not the C++ package.
 install.components = ["python"]
 wheel.exclude = ["include/**", "lib/**", "share/**", "bin/**"]
@@ -64,7 +65,7 @@ GEODEX_BUNDLE_DEPS = "ON"
 testpaths = ["python/tests"]
 
 [tool.cibuildwheel]
-build = "cp312-*"
+build = "cp311-*"
 build-frontend = "build"
 test-command = "python {project}/scripts/ci/wheel_smoke.py"
 # The smoke test plans with the official OMPL wheel and geodex in one process.

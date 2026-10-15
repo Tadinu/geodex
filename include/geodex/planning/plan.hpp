@@ -448,7 +448,8 @@ PlanResult<typename ManifoldT::Point> plan_impl(
   const int ambient = static_cast<int>(
       manifold.from_unit_cube(Eigen::VectorXd::Constant(manifold.unit_cube_dim(), 0.5)).size());
   if (static_cast<int>(start.size()) != ambient || static_cast<int>(goal.size()) != ambient) {
-    throw std::invalid_argument("plan: start and goal must match the manifold ambient size");
+    throw std::invalid_argument(std::string("plan: start and goal must match the manifold ambient size: ") +
+    std::to_string(ambient)) ;
   }
   if (!std::isfinite(settings.collision_check_resolution) ||
       settings.collision_check_resolution < 0.0) {
